@@ -1,0 +1,122 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      kinematicCloudProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solution
+{
+    active          true;
+    coupled         no;
+    transient       yes;
+    cellValueSourceCorrection no;
+    maxCo           0.3;
+
+    sourceTerms
+    {
+        schemes
+        {
+            U               semiImplicit 1;
+        }
+    }
+
+    interpolationSchemes
+    {
+        rho             cell;
+        U               cellPoint;
+        muc             cell;
+        p               cell;
+    }
+
+    integrationSchemes
+    {
+        U               Euler;
+    }
+}
+
+constantProperties
+{
+    rho0            1600;
+}
+
+subModels
+{
+    particleForces
+    {
+        sphereDrag;
+        gravity;
+    }
+
+    injectionModels
+    {
+        model1
+        {
+            type            patchInjection;
+            massTotal       1;
+            SOI             0;
+            parcelBasisType mass;
+            patch           top;
+            duration        10;
+            parcelsPerSecond 100;
+            // velocityType    patchValue;
+            velocityType    fixedValue;
+            //velocityType    zeroGradient;
+            U0              (0 -0.1 0);
+            flowRateProfile constant 1;
+            sizeDistribution
+            {
+                type            uniform;
+                // type            normal;
+
+                normalDistribution
+                {
+                    mu              1e-5;
+                    sigma           1e-6;
+                    minValue        1e-6;
+                    maxValue        1e-4;
+                }
+                uniformDistribution
+                {
+                    minValue        1e-6;
+                    maxValue        1e-4;  
+                }
+            }
+        }
+    }
+
+    dispersionModel none;
+
+    patchInteractionModel standardWallInteraction;
+
+    stochasticCollisionModel none;
+
+    surfaceFilmModel none;
+
+    standardWallInteractionCoeffs
+    {
+        type            rebound;
+    }
+}
+
+
+// cloudFunctions
+// {
+//     KinematicWeberNumber1
+//     {
+//         type    WeberNumber;
+//         sigma   1.0;
+//     }
+// }
+
+
+// ************************************************************************* //
