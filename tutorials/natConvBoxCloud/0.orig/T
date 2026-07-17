@@ -24,9 +24,14 @@ internalField   uniform $T_air;
 
 boundaryField
 {
-    frontAndBack
+    front
     {
-        type            empty;
+        type            cyclic;
+    }
+
+    back
+    {
+        type            cyclic;
     }
 
     left

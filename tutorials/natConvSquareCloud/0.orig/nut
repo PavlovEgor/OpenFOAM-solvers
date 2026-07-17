@@ -10,24 +10,19 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      p;
+    object      nut;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 2 -2 0 0 0 0];
+dimensions      [0 2 -1 0 0 0 0];
 
 internalField   uniform 0;
 
 boundaryField
 {
-    front
+    frontAndBack
     {
-        type            cyclic;
-    }
-
-    back
-    {
-        type            cyclic;
+        type            empty;
     }
 
     left
@@ -42,14 +37,14 @@ boundaryField
 
     bottom
     {
-        type            calculated;
-        value           $internalField;
+        type            nutkWallFunction;
+        value           uniform 0;
     }
 
     top
     {
         type            calculated;
-        value           $internalField;
+        value           uniform 0;
     }
 }
 

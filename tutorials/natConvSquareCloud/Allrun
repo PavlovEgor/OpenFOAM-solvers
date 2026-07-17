@@ -5,14 +5,10 @@ cd "${0%/*}" || exit                                # Run from this directory
 
 restore0Dir
 
-python3 constant/geometry/makeHillSTL.py
-
 runApplication blockMesh
 
-runApplication decomposePar
+runApplication $(getApplication)
 
-runParallel $(getApplication)
-
-runApplication reconstructPar
+# postProcess -func writeCellCentres
 
 #------------------------------------------------------------------------------

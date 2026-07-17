@@ -20,14 +20,9 @@ internalField   uniform 0;
 
 boundaryField
 {
-    front
+    frontAndBack
     {
-        type            cyclic;
-    }
-
-    back
-    {
-        type            cyclic;
+        type            empty;
     }
 
     left

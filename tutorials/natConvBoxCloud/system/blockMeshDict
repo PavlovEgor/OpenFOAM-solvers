@@ -16,79 +16,66 @@ FoamFile
 
 scale       1.0;
 
+// Domain size: X and Z - the periodic horizontal plane, Y - height. The
+// bottom patch is shaped into a genuinely 3D, axisymmetric hill (a
+// raised-cosine dome, not a 2D ridge extruded along Z): the bottom face of
+// the single block is projected onto the heightfield surface
+// constant/geometry/hill.stl, built by constant/geometry/makeHillSTL.py from
+// h(r) = H/2 * (1 + cos(2*pi*r/W)) for r <= W/2, else 0, where r is the
+// radial distance from the hill centre (xc=L/2, zc=Lz/2) in the X-Z plane.
+// L, Lz, H and W below are the single source of truth for that formula: the
+// generator script reads them straight out of this file with foamDictionary
+// instead of duplicating the numbers, so regenerate hill.stl (or rerun
+// Allrun) after changing any of them. The hill footprint (radius W/2) sits
+// well inside the domain, so the bottom patch is flat (h=0) all along the
+// X=0, X=L, Z=0 and Z=Lz edges, keeping the left/right and front/back
+// cyclic patches flat and periodicity exact.
 L 100;
-N 100;
+N 50;
+Ly #eval{2 * $L};
+Ny #eval{2 * $N};
+Lz #eval{1 * $L};
+Nz 50;
+H 20;
+W 60;
 
+geometry
+{
+    hill
+    {
+        type    triSurfaceMesh;
+        file    "hill.stl";
+    }
+}
 
 vertices
 (
     (0 0 0)     // 0 - нижний левый перед
     ($L 0 0)     // 1 - нижний правый перед
-    ($L $L 0)     // 2 - верхний правый перед
-    (0 $L 0)     // 3 - верхний левый перед
-    (0 0    #eval{0.1 * $L})   // 4 - нижний левый зад
-    ($L 0   #eval{0.1 * $L})   // 5 - нижний правый зад
-    ($L $L  #eval{0.1 * $L})   // 6 - верхний правый зад
-    (0 $L   #eval{0.1 * $L})   // 7 - верхний левый зад
+    ($L $Ly 0)     // 2 - верхний правый перед
+    (0 $Ly 0)     // 3 - верхний левый перед
+    (0 0    $Lz)   // 4 - нижний левый зад
+    ($L 0   $Lz)   // 5 - нижний правый зад
+    ($L $Ly  $Lz)   // 6 - верхний правый зад
+    (0 $Ly   $Lz)   // 7 - верхний левый зад
 );
 
 
 blocks
 (
-    hex (0 1 2 3 4 5 6 7) ($N $N 1) simpleGrading (1 1 1)
+    hex (0 1 2 3 4 5 6 7) ($N $Ny $Nz) simpleGrading (1 1 1)
 );
 
-// Bottom boundary (edges 0-1 and 4-5) is shaped into a hill using a
-// raised-cosine bump: h(x) = H/2 * (1 + cos(2*pi*(x-xc)/W)) for |x-xc| <= W/2,
-// h(x) = 0 otherwise. H=20, W=60, xc=50 (flat, matching y=0 at the cyclic
-// left/right boundaries so periodicity is preserved).
-edges
+// The four bottom-face edges (0-1, 1-5, 5-4, 4-0) are left straight (default):
+// the hill footprint never reaches them, so they stay at y=0 exactly as the
+// projected surface does there too. Only the interior of the bottom face
+// needs to be draped onto the dome, done below via face projection.
+//
+// Project the whole bottom face (block 0, local face 2 = y-min = (0 1 5 4),
+// see $FOAM_ETC/cellModels) onto the hill heightfield surface.
+faces
 (
-    spline 0 1
-    (
-        (5 0.0000 0)
-        (10 0.0000 0)
-        (15 0.0000 0)
-        (20 0.0000 0)
-        (25 1.3397 0)
-        (30 5.0000 0)
-        (35 10.0000 0)
-        (40 15.0000 0)
-        (45 18.6603 0)
-        (50 20.0000 0)
-        (55 18.6603 0)
-        (60 15.0000 0)
-        (65 10.0000 0)
-        (70 5.0000 0)
-        (75 1.3397 0)
-        (80 0.0000 0)
-        (85 0.0000 0)
-        (90 0.0000 0)
-        (95 0.0000 0)
-    )
-
-    spline 4 5
-    (
-        (5 0.0000 #eval{0.1 * $L})
-        (10 0.0000 #eval{0.1 * $L})
-        (15 0.0000 #eval{0.1 * $L})
-        (20 0.0000 #eval{0.1 * $L})
-        (25 1.3397 #eval{0.1 * $L})
-        (30 5.0000 #eval{0.1 * $L})
-        (35 10.0000 #eval{0.1 * $L})
-        (40 15.0000 #eval{0.1 * $L})
-        (45 18.6603 #eval{0.1 * $L})
-        (50 20.0000 #eval{0.1 * $L})
-        (55 18.6603 #eval{0.1 * $L})
-        (60 15.0000 #eval{0.1 * $L})
-        (65 10.0000 #eval{0.1 * $L})
-        (70 5.0000 #eval{0.1 * $L})
-        (75 1.3397 #eval{0.1 * $L})
-        (80 0.0000 #eval{0.1 * $L})
-        (85 0.0000 #eval{0.1 * $L})
-        (90 0.0000 #eval{0.1 * $L})
-        (95 0.0000 #eval{0.1 * $L})
-    )
+    project (0 2) hill
 );
 
 boundary
@@ -98,7 +85,7 @@ boundary
         type wall;
         faces
         (
-            (0 1 5 4)  // Грань: холм (см. edges), X от 0 до L
+            (0 1 5 4)  // Грань: холм, спроецированная на hill.stl (см. faces)
         );
     }
     top
@@ -106,7 +93,7 @@ boundary
         type wall;
         faces
         (
-            (2 3 7 6)  // Грань: Y=L (верх)
+            (2 3 7 6)  // Грань: Y=Ly (верх)
         );
     }
     left
@@ -127,12 +114,21 @@ boundary
             (1 2 6 5)
         );
     }
-    frontAndBack
+    front
     {
-        type empty;
+        type cyclic;
+        neighbourPatch back;
         faces
         (
             (0 1 2 3)
+        );
+    }
+    back
+    {
+        type cyclic;
+        neighbourPatch front;
+        faces
+        (
             (4 5 6 7)
         );
     }

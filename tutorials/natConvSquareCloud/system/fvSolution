@@ -70,7 +70,7 @@ solvers
 }
 PIMPLE
 {
-    nOuterCorrectors 6;
+    nOuterCorrectors 10;
     nCorrectors     2;
     nNonOrthogonalCorrectors 1;
     turbOnFinalIterOnly true;

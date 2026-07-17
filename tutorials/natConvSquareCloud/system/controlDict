@@ -9,48 +9,45 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      p;
+    class       dictionary;
+    object      controlDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 2 -2 0 0 0 0];
+application     buoyantBoussinesqKinematicPimpleFoam;
 
-internalField   uniform 0;
+startFrom       latestTime;
 
-boundaryField
-{
-    front
-    {
-        type            cyclic;
-    }
+startTime       0;
 
-    back
-    {
-        type            cyclic;
-    }
+stopAt          endTime;
 
-    left
-    {
-        type            cyclic;
-    }
+endTime         3600;
 
-    right
-    {
-        type            cyclic;
-    }
+deltaT          0.01;
 
-    bottom
-    {
-        type            calculated;
-        value           $internalField;
-    }
+adjustTimeStep  yes;
 
-    top
-    {
-        type            calculated;
-        value           $internalField;
-    }
-}
+maxCo           1.5;
+
+maxDeltaT       1800;
+
+writeControl    adjustableRunTime;
+
+writeInterval   30;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
 
 // ************************************************************************* //

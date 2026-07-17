@@ -10,24 +10,23 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      p;
+    object      T;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 2 -2 0 0 0 0];
+dimensions      [0 0 0 1 0 0 0];
 
-internalField   uniform 0;
+T_air       297;
+dT 3;
+T_bottom  #eval{$T_air + $dT};
+
+internalField   uniform $T_air;
 
 boundaryField
 {
-    front
+    frontAndBack
     {
-        type            cyclic;
-    }
-
-    back
-    {
-        type            cyclic;
+        type            empty;
     }
 
     left
@@ -42,15 +41,18 @@ boundaryField
 
     bottom
     {
-        type            calculated;
-        value           $internalField;
+        type            fixedValue;
+        value           uniform $T_bottom;
     }
 
     top
     {
-        type            calculated;
-        value           $internalField;
+        type            inletOutlet;
+        inletValue      uniform $T_air;
+        value           uniform $T_air;
     }
+
 }
+
 
 // ************************************************************************* //

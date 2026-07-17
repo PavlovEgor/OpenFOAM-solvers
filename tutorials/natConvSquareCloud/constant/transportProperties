@@ -9,48 +9,30 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      p;
+    class       dictionary;
+    object      transportProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 2 -2 0 0 0 0];
+transportModel Newtonian;
 
-internalField   uniform 0;
+// Laminar viscosity
+nu              1.5e-05;
 
-boundaryField
-{
-    front
-    {
-        type            cyclic;
-    }
+// Thermal expansion coefficient
+beta            0.003413;
 
-    back
-    {
-        type            cyclic;
-    }
+// Reference temperature
+TRef            313;
 
-    left
-    {
-        type            cyclic;
-    }
+// Laminar Prandtl number
+Pr              0.71;
 
-    right
-    {
-        type            cyclic;
-    }
+// Turbulent Prandtl number
+Prt             0.71;
 
-    bottom
-    {
-        type            calculated;
-        value           $internalField;
-    }
+// dencity of air
+rhoInf          1.2;
 
-    top
-    {
-        type            calculated;
-        value           $internalField;
-    }
-}
 
 // ************************************************************************* //

@@ -22,9 +22,14 @@ internalField   uniform $omegaInlet;
 
 boundaryField
 {
-    frontAndBack
+    front
     {
-        type            empty;
+        type            cyclic;
+    }
+
+    back
+    {
+        type            cyclic;
     }
 
     left
