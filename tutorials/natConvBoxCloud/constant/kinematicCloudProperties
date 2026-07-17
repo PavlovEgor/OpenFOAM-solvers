@@ -65,7 +65,7 @@ subModels
             massTotal       1;
             SOI             0;
             parcelBasisType mass;
-            patch           top;
+            patch           bottom;
             duration        10;
             parcelsPerSecond 100;
             // velocityType    patchValue;
@@ -88,7 +88,7 @@ subModels
                 uniformDistribution
                 {
                     minValue        1e-6;
-                    maxValue        1e-4;  
+                    maxValue        1e-5;  
                 }
             }
         }

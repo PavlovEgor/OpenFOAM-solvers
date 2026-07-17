@@ -14,13 +14,13 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-simulationType      laminar;
-// simulationType      RAS;
+// simulationType      laminar;
+simulationType      RAS;
 
 
 RAS
 {
-    RASModel        kEpsilon;
+    RASModel        kOmegaSST;
 
     turbulence      on;
 

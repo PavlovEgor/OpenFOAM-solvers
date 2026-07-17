@@ -38,8 +38,57 @@ blocks
     hex (0 1 2 3 4 5 6 7) ($N $N 1) simpleGrading (1 1 1)
 );
 
+// Bottom boundary (edges 0-1 and 4-5) is shaped into a hill using a
+// raised-cosine bump: h(x) = H/2 * (1 + cos(2*pi*(x-xc)/W)) for |x-xc| <= W/2,
+// h(x) = 0 otherwise. H=20, W=60, xc=50 (flat, matching y=0 at the cyclic
+// left/right boundaries so periodicity is preserved).
 edges
 (
+    spline 0 1
+    (
+        (5 0.0000 0)
+        (10 0.0000 0)
+        (15 0.0000 0)
+        (20 0.0000 0)
+        (25 1.3397 0)
+        (30 5.0000 0)
+        (35 10.0000 0)
+        (40 15.0000 0)
+        (45 18.6603 0)
+        (50 20.0000 0)
+        (55 18.6603 0)
+        (60 15.0000 0)
+        (65 10.0000 0)
+        (70 5.0000 0)
+        (75 1.3397 0)
+        (80 0.0000 0)
+        (85 0.0000 0)
+        (90 0.0000 0)
+        (95 0.0000 0)
+    )
+
+    spline 4 5
+    (
+        (5 0.0000 #eval{0.1 * $L})
+        (10 0.0000 #eval{0.1 * $L})
+        (15 0.0000 #eval{0.1 * $L})
+        (20 0.0000 #eval{0.1 * $L})
+        (25 1.3397 #eval{0.1 * $L})
+        (30 5.0000 #eval{0.1 * $L})
+        (35 10.0000 #eval{0.1 * $L})
+        (40 15.0000 #eval{0.1 * $L})
+        (45 18.6603 #eval{0.1 * $L})
+        (50 20.0000 #eval{0.1 * $L})
+        (55 18.6603 #eval{0.1 * $L})
+        (60 15.0000 #eval{0.1 * $L})
+        (65 10.0000 #eval{0.1 * $L})
+        (70 5.0000 #eval{0.1 * $L})
+        (75 1.3397 #eval{0.1 * $L})
+        (80 0.0000 #eval{0.1 * $L})
+        (85 0.0000 #eval{0.1 * $L})
+        (90 0.0000 #eval{0.1 * $L})
+        (95 0.0000 #eval{0.1 * $L})
+    )
 );
 
 boundary
@@ -49,7 +98,7 @@ boundary
         type wall;
         faces
         (
-            (0 1 5 4)  // Грань: Z=0, Y=0, X от 0 до 1
+            (0 1 5 4)  // Грань: холм (см. edges), X от 0 до L
         );
     }
     top
@@ -57,23 +106,25 @@ boundary
         type wall;
         faces
         (
-            (2 3 7 6)  // Грань: Z=0, Y=1, X от 0 до 1
+            (2 3 7 6)  // Грань: Y=L (верх)
         );
     }
     left
     {
-        type wall;
+        type cyclic;
+        neighbourPatch right;
         faces
         (
-            (0 3 7 4)  // Грань: X=0
+            (0 3 7 4)
         );
     }
     right
     {
-        type wall;
+        type cyclic;
+        neighbourPatch left;
         faces
         (
-            (1 2 6 5)  // Грань: X=1
+            (1 2 6 5)
         );
     }
     frontAndBack
@@ -81,8 +132,8 @@ boundary
         type empty;
         faces
         (
-            (0 1 2 3)  // Передняя грань (Z=0)
-            (4 5 6 7)  // Задняя грань (Z=0.1)
+            (0 1 2 3)
+            (4 5 6 7)
         );
     }
 );
