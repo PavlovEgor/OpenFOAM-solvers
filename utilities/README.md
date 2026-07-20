@@ -1,5 +1,59 @@
 # OpenFOAM Chemistry Model Utilities
 
+## chemkin2foam.py
+
+Converts CHEMKIN mechanism files to OpenFOAM format for use with chemistryModel.
+
+### Features
+
+- Parses CHEMKIN thermodynamics (.CKT) and kinetics (.CKI) files
+- Extracts NASA 7-coefficient polynomial data
+- Generates OpenFOAM-format files:
+  - `thermo.compressibleGas` — species thermodynamic properties
+  - `reactions` — reaction definitions
+- No external dependencies (built-in CHEMKIN parser)
+
+### Usage
+
+```bash
+./chemkin2foam.py <thermo_file.CKT> <kinetics_file.CKI> [output_dir]
+```
+
+### Arguments
+
+- `thermo_file.CKT`: CHEMKIN thermodynamic database file
+- `kinetics_file.CKI`: CHEMKIN kinetics/reactions file
+- `output_dir` (optional): Output directory (default: current directory)
+
+### Example
+
+Convert C1_C3_HT_NOX mechanism:
+
+```bash
+./utilities/chemkin2foam.py \
+  external/Kinetic-Mechanisms/Gas-Phase/CoreMechanism_C0-C4/Soot-NOx/C1_C3_HT_NOX_159_2459/thermo.CHEMKIN.CKT \
+  external/Kinetic-Mechanisms/Gas-Phase/CoreMechanism_C0-C4/Soot-NOx/C1_C3_HT_NOX_159_2459/kinetics.CHEMKIN.CKI \
+  tutorials/DLBFoam-Hydrogen-Tutorials/mech/thermo/
+```
+
+### Output
+
+- `thermo.compressibleGas`: Contains species definitions with:
+  - Molecular weight
+  - Elemental composition
+  - NASA polynomials (high and low temperature ranges)
+  - Transport properties
+  
+- `reactions`: Contains reaction definitions with:
+  - Element list
+  - Species list
+  - Reaction equations and Arrhenius parameters (A, β, Tₐ)
+
+### Supported Formats
+
+- NASA 7-coefficient polynomial format (most common in CHEMKIN)
+- Arrhenius and reversible reaction rate expressions
+
 ## pyjac4foam_options_gen.py
 
 Generates OpenFOAM Make files (`Make/files`, `Make/filesCuda`, `Make/options`) for any pyJac-generated chemistry mechanism.
