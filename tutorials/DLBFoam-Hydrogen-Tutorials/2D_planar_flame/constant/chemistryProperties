@@ -22,7 +22,7 @@ initialChemicalTimeStep 1;
 chemistryType
 {
     solver          ode_pyJac;
-    method          loadBalanced_pyJac;
+    method          kodesChemistryModel;
 }
 
 odeCoeffs
