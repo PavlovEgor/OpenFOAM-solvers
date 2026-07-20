@@ -50,7 +50,7 @@ def get_include_dirs(mechanism_path):
 
 
 def compute_relative_path(mechanism_path, output_dir):
-    """Compute relative path from output_dir to mechanism_path."""
+    """Compute relative path from output_dir's parent to mechanism_path."""
     import os
 
     # Get absolute paths
@@ -61,9 +61,12 @@ def compute_relative_path(mechanism_path, output_dir):
     if output_abs.endswith(os.sep):
         output_abs = output_abs[:-1]
 
+    # Compute from parent of output_dir (typically src/kodesChemistyModel/ if output_dir is Make/)
+    output_parent = os.path.dirname(output_abs)
+
     # Use os.path.relpath to compute relative path
     try:
-        rel_path = os.path.relpath(mechanism_abs, output_abs)
+        rel_path = os.path.relpath(mechanism_abs, output_parent)
         return rel_path
     except ValueError:
         # Different drives on Windows, fall back to absolute
