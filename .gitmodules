@@ -4,3 +4,6 @@
 [submodule "external/Kinetic-Mechanisms"]
 	path = external/Kinetic-Mechanisms
 	url = https://github.com/CRECKMODELING/Kinetic-Mechanisms.git
+[submodule "external/KODES"]
+	path = external/KODES
+	url = https://github.com/PavlovEgor/KODES.git

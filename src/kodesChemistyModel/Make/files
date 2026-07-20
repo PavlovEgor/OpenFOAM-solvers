@@ -1,8 +1,8 @@
-KODES/src/basic_linalg.cu
-KODES/src/Resources/SeulexDeviceResources.cu
-KODES/src/Resources/DeviceResources.cu
-KODES/src/Resources/HostResources.cu
-KODES/src/ODESystem/pyJacSystem.cu
+../../external/KODES/src/basic_linalg.cu
+../../external/KODES/src/Resources/SeulexDeviceResources.cu
+../../external/KODES/src/Resources/DeviceResources.cu
+../../external/KODES/src/Resources/HostResources.cu
+../../external/KODES/src/ODESystem/pyJacSystem.cu
 pyJacSource/grimech/out/chem_utils.cu
 pyJacSource/grimech/out/dydt.cu
 pyJacSource/grimech/out/jacob.cu

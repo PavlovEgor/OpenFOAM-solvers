@@ -8,11 +8,11 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/chemistryModel/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/thermophysicalProperties/lnInclude \
-    -IKODES/include \
-    -IKODES/include/Integrators \
-    -IKODES/src/Integrators \
-    -IKODES/include/ODESystem \
-    -IKODES/include/Resources \
+    -I../../external/KODES/include \
+    -I../../external/KODES/include/Integrators \
+    -I../../external/KODES/src/Integrators \
+    -I../../external/KODES/include/ODESystem \
+    -I../../external/KODES/include/Resources \
     -IpyJacSource/grimech/out \
     -IpyJacSource/grimech/out/jacobs \
     -IpyJacSource/grimech/out/rates
