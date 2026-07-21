@@ -47,7 +47,7 @@ runTimeModifiable true;
 
 adjustTimeStep  no;
 
-libs            ( "libchemistryModel_DLB.so" "libODE_DLB.so" "$FOAM_CASE/constant/mech/lib/libc_pyjac.so" "libFickianTransport.so" );
+libs            ( "libkodesChemistryModel.so");
 
 
 // ************************************************************************* //

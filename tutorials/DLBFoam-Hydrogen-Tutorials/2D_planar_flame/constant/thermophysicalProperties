@@ -18,8 +18,8 @@ FoamFile
 thermoType
 {
     type            hePsiThermo;
-    mixture         coefficientWilkeMultiComponentMixture;
-    transport       logPolynomial;
+    mixture         reactingMixture;
+    transport       sutherland;
     thermo          janaf;
     energy          sensibleEnthalpy;
     equationOfState perfectGas;
@@ -28,7 +28,7 @@ thermoType
 
 inertSpecie N2;
 
-#include "$FOAM_CASE/constant/mech/thermo/species.foam"
-#include "$FOAM_CASE/constant/mech/thermo/thermo.foam"
+#include "$FOAM_CASE/constant/mech/thermo/reactions"
+#include "$FOAM_CASE/constant/mech/thermo/thermo.compressibleGas"
 
 // ************************************************************************* //

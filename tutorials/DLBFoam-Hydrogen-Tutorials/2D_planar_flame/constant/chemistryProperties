@@ -21,13 +21,13 @@ initialChemicalTimeStep 1;
 
 chemistryType
 {
-    solver          ode_pyJac;
+    solver          ode;
     method          kodesChemistryModel;
 }
 
 odeCoeffs
 {
-    solver          seulex_LAPACK;
+    solver          seulex;
     absTol          1e-10;
     relTol          1e-5;
 }
