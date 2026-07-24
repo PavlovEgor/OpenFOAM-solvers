@@ -195,8 +195,11 @@ class ChemkinParser:
                     beta = float(parts[-2])
                     Ta = float(parts[-1])
 
+                    # OpenFOAM's reaction dictionary format always uses a
+                    # bare "=" between reactants and products; reversibility
+                    # is conveyed by the "type" entry, not by the arrow.
                     equation = (
-                        f"{_format_reaction_side(reactants)} => "
+                        f"{_format_reaction_side(reactants)} = "
                         f"{_format_reaction_side(products)}"
                     )
 
