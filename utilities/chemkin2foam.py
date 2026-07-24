@@ -23,6 +23,24 @@ from pathlib import Path
 from collections import defaultdict
 
 
+_TERM_RE = re.compile(r'^(\d+\.?\d*)?(.+)$')
+
+
+def _format_reaction_side(side):
+    """Insert spaces around '+' and between stoich coefficients and species
+    (e.g. "2CH3O2+O2" -> "2 CH3O2 + O2") so OpenFOAM's reaction parser,
+    which tokenizes on whitespace, can read coefficients and species names."""
+    terms = []
+    for term in side.split('+'):
+        term = term.strip()
+        coeff, specie = _TERM_RE.match(term).groups()
+        if coeff and coeff not in ('1', '1.0'):
+            terms.append(f"{coeff} {specie}")
+        else:
+            terms.append(specie)
+    return ' + '.join(terms)
+
+
 class ChemkinParser:
     """Simple CHEMKIN file parser."""
 
@@ -177,8 +195,13 @@ class ChemkinParser:
                     beta = float(parts[-2])
                     Ta = float(parts[-1])
 
+                    equation = (
+                        f"{_format_reaction_side(reactants)} => "
+                        f"{_format_reaction_side(products)}"
+                    )
+
                     return {
-                        'equation': line.split(None, 1)[0] if ' ' in line else line,
+                        'equation': equation,
                         'reactants': reactants,
                         'products': products,
                         'A': A,

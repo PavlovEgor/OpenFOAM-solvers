@@ -101,3 +101,5 @@ tutorials/**/log.*
 *.foam
 
 venv/
+
+__pycache__
