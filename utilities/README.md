@@ -1,58 +1,51 @@
 # OpenFOAM Chemistry Model Utilities
 
-## chemkin2foam.py
+## chemkinToFoam.py
 
-Converts CHEMKIN mechanism files to OpenFOAM format for use with chemistryModel.
+Converts a CHEMKIN-III mechanism (kinetics + thermo + transport) to OpenFOAM format by
+driving the real, upstream `chemkinToFoam` utility instead of re-parsing CHEMKIN syntax
+by hand. Produces correct reaction types (reversible / third-body / Troe / Lindemann
+fall-off), real per-specie NASA thermo data, and real per-specie Sutherland transport
+coefficients (`As`, `Ts`) fitted from the mechanism's own Lennard-Jones transport data via
+Cantera.
 
-### Features
+Two things about real-world CHEMKIN files that trip up OpenFOAM's `chemkinToFoam` are
+handled automatically:
 
-- Parses CHEMKIN thermodynamics (.CKT) and kinetics (.CKI) files
-- Extracts NASA 7-coefficient polynomial data
-- Generates OpenFOAM-format files:
-  - `thermo.compressibleGas` — species thermodynamic properties
-  - `reactions` — reaction definitions
-- No external dependencies (built-in CHEMKIN parser)
+- **PLOG** (pressure-dependent Arrhenius) auxiliary lines aren't supported by OpenFOAM's
+  chemkinReader at all ("unknown third-body specie PLOG"). They're stripped, so those
+  reactions fall back to their own leading (high-pressure-limit) Arrhenius parameters —
+  pressure-dependence is lost for the affected reactions.
+- The `THERMO`/`THERMO ALL` temperature-range line must be an exact fixed-width 3×10
+  column record (Fortran `3F10.0`); free-format thermo files are reformatted to match.
+
+`chemkinToFoam` also doesn't read a CHEMKIN `.TRAN` transport file directly — its
+`<CHEMKINTransport>` argument must already be an OpenFOAM dictionary of per-specie
+`sutherlandTransport` coefficients, which this script computes.
+
+### Requirements
+
+- `cantera` (Python package) — used for mechanism parsing and transport property
+  evaluation.
+- The OpenFOAM `chemkinToFoam` binary on `$PATH` (source an OpenFOAM environment first).
 
 ### Usage
 
 ```bash
-./chemkin2foam.py <thermo_file.CKT> <kinetics_file.CKI> [output_dir]
+./chemkinToFoam.py <kinetics.CKI> <thermo.CKT> <transport.TRAN> <output_dir> \
+  [--chemkinToFoam PATH] [--n-fit-points N]
 ```
-
-### Arguments
-
-- `thermo_file.CKT`: CHEMKIN thermodynamic database file
-- `kinetics_file.CKI`: CHEMKIN kinetics/reactions file
-- `output_dir` (optional): Output directory (default: current directory)
 
 ### Example
 
-Convert C1_C3_HT_NOX mechanism:
-
 ```bash
-./utilities/chemkin2foam.py \
-  external/Kinetic-Mechanisms/Gas-Phase/CoreMechanism_C0-C4/Soot-NOx/C1_C3_HT_NOX_159_2459/thermo.CHEMKIN.CKT \
+source /usr/lib/openfoam/openfoam2412/etc/bashrc
+./utilities/chemkinToFoam.py \
   external/Kinetic-Mechanisms/Gas-Phase/CoreMechanism_C0-C4/Soot-NOx/C1_C3_HT_NOX_159_2459/kinetics.CHEMKIN.CKI \
+  external/Kinetic-Mechanisms/Gas-Phase/CoreMechanism_C0-C4/Soot-NOx/C1_C3_HT_NOX_159_2459/thermo.CHEMKIN.CKT \
+  external/Kinetic-Mechanisms/Gas-Phase/CoreMechanism_C0-C4/Soot-NOx/C1_C3_HT_NOX_159_2459/TOT2003.TRAN \
   tutorials/DLBFoam-Hydrogen-Tutorials/mech/thermo/
 ```
-
-### Output
-
-- `thermo.compressibleGas`: Contains species definitions with:
-  - Molecular weight
-  - Elemental composition
-  - NASA polynomials (high and low temperature ranges)
-  - Transport properties
-  
-- `reactions`: Contains reaction definitions with:
-  - Element list
-  - Species list
-  - Reaction equations and Arrhenius parameters (A, β, Tₐ)
-
-### Supported Formats
-
-- NASA 7-coefficient polynomial format (most common in CHEMKIN)
-- Arrhenius and reversible reaction rate expressions
 
 ## pyjac4foam_options_gen.py
 
