@@ -7,7 +7,7 @@
 void read_2_column_data_file(const string& filename, std::vector<float>& xc, std::vector<float>& Yc) {
     // Reading cantera data file
     // ifstream dataFile(dict.name() + ".dat");
-    ifstream dataFile(filename);
+    std::ifstream dataFile(filename);
     if (! dataFile.is_open()){
         Info << "WARNING: Data file " + filename + " is not open!" << endl;
     }

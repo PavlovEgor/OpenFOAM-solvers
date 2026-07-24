@@ -3,6 +3,7 @@ inletValue #codeStream
     codeInclude
     #{
         #include "fvCFD.H"
+        #include <fstream>
     #};
     codeOptions
     #{
@@ -19,7 +20,7 @@ inletValue #codeStream
         scalar value;
 
         // Reading cantera data file
-        ifstream dataFile(dict.name() + ".dat");
+        std::ifstream dataFile(dict.name() + ".dat");
         if (! dataFile.is_open()){
             Info << "WARNING: Data file " + dict.name() + ".dat is not open!" << endl;
         } else {
